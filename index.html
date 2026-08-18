@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elon Musk | Executive Office</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent: #3e9bff; /* Tesla Blue-ish */
+            --danger: #ff3b30;
+            --success: #34c759;
+            --border: #333333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- LOCK SCREEN (VERIFICATION) --- */
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo-lock {
+            font-size: 40px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .access-form {
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-unlock {
+            width: 100%;
+            padding: 15px;
+            background: var(--text-primary);
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-unlock:active {
+            opacity: 0.8;
+        }
+
+        /* --- MAIN DASHBOARD --- */
+        #dashboard {
+            display: none;
+            padding: 20px;
+            padding-bottom: 80px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            background: #333;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid var(--border);
+        }
+
+        .profile-info h1 {
+            font-size: 20px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .profile-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 5px 0 0 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(52, 199, 89, 0.2)
+
+
+card-bg', tg.themeParams.secondary_bg_color || '#111111');
+
+        function verifyAccess() {
+            const org = document.getElementById('orgName').value;
+            const purpose = document.getElementById('purpose').value;
+            
+            if(org.length < 3) {
+                tg.showAlert("Please enter a valid Organization Name.");
+                return;
+            }
+
+            // Simulate loading
+            const btn = document.querySelector('.btn-unlock');
+            btn.textContent = "Verifying Credentials...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                
+                // Haptic success
+                tg.HapticFeedback.notificationOccurred('success');
+                
+                // Set Main Button for quick contact
+                tg.MainButton.setText("EMAIL EXECUTIVE OFFICE");
+                tg.MainButton.show();
+                tg.MainButton.onClick(() => {
+                    tg.openLink("mailto:exec.office@tesla.com?subject=Partnership Inquiry from " + org);
+                });
+
+            }, 1500);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Email copied: " + text);
+                tg.HapticFeedback.impactOccurred('light');
+            });
+        }
+
+        function submitProposal() {
+            const text = document.getElementById('proposal').value;
+            if(text.length < 10) {
+                tg.showAlert("Proposal is too short.");
+                return;
+            }
+            
+            tg.showConfirm("Send this proposal to the executive office?", (confirmed) => {
+                if(confirmed) {
+                    // Here you would normally send data to backend
+                    showToast("Proposal Sent Successfully.");
+                    document.getElementById('proposal').value = "";
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>;
+
+
+color: var(--success);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        /* SECTIONS */
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .contact-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+        }
+
+        .contact-row:last-child {
+            border-bottom: none;
+        }
+
+        .contact-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .contact-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .priority-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .priority-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .priority-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .priority-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .disclaimer {
+            font-size: 11px;
+            color: #444;
+            text-align: center;
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+    <!-- LOCK SCREEN -->
+    <div id="lock-screen">
+        <div class="logo-lock">TESLA / SPACEX / X</div>
+        <h2 style="margin-bottom: 10px;">Partner Access Only</h2>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 30px;">
+            This portal is restricted to verified investors, suppliers, and strategic partners.
+        </p>
+
+        <div class="access-form">
+            <div class="input-group">
+                <label>Organization Name</label>
+                <input type="text" id="orgName" placeholder="e.g. SpaceX Supply Chain">
+            </div>
+            <div class="input-group">
+                <label>Purpose of Contact</label>
+                <select id="purpose">
+                    <option value="investment">Strategic Investment</option>
+                    <option value="supply">Supply Chain / Manufacturing</option>
+                    <option value="media">Official Media Inquiry</option>
+                    <option value="gov">Government / Regulatory</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Verification
+
+
+Code (Optional)</label>
+                <input type="password" id="code" placeholder="Enter NDA Code if provided">
+            </div>
+            <button class="btn-unlock" onclick="verifyAccess()">Request Access</button>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard">
+        <div class="header-profile">
+            <div class="avatar">EM</div>
+            <div class="profile-info">
+                <h1>Elon Musk</h1>
+                <p>CEO: Tesla, SpaceX, xAI, Neuralink</p>
+                <span class="status-badge">● Available for Priority Partners</span>
+            </div>
+        </div>
+
+        <div class="section-title">Current Focus Areas</div>
+        <div class="priority-grid">
+            <div class="priority-card">
+                <div class="priority-icon">🚀</div>
+                <div class="priority-name">Starship Launch</div>
+            </div>
+            <div class="priority-card">
+                <div class="priority-icon">🤖</div>
+                <div class="priority-name">Optimus Gen 2</div>
+            </div>
+            <div class="priority-card">
+                <div class="priority-icon">⚡</div>
+                <div class="priority-name">FSD v12 Rollout</div>
+            </div>
+            <div class="priority-card">
+                <div class="priority-icon">🧠</div>
+                <div class="priority-name">Neuralink Trials</div>
+            </div>
+        </div>
+
+        <div class="section-title">Direct Contacts (Verified)</div>
+        <div class="card">
+            <div class="contact-row">
+                <span class="contact-label">Executive Assistant</span>
+                <div>
+                    <a href="#" class="contact-value" onclick="copyToClipboard('exec.office@tesla.com')">Email</a>
+                    <button class="copy-btn" onclick="copyToClipboard('exec.office@tesla.com')">Copy</button>
+                </div>
+            </div>
+            <div class="contact-row">
+                <span class="contact-label">Investor Relations</span>
+                <div>
+                    <a href="#" class="contact-value" onclick="copyToClipboard('ir@tesla.com')">Email</a>
+                    <button class="copy-btn" onclick="copyToClipboard('ir@tesla.com')">Copy</button>
+                </div>
+            </div>
+            <div class="contact-row">
+                <span class="contact-label">Media Press Kit</span>
+                <div>
+                    <a href="https://www.tesla.com/about/legal" target="_blank" class="contact-value">View Portal ↗</a>
+                </div>
+            </div>
+             <div class="contact-row">
+                <span class="contact-label">Secure Signal</span>
+                <div>
+                    <span class="contact-value" style="opacity: 0.5;">Request via Email</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Submit Proposal</div>
+        <div class="card">
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">
+                For supply chain or technical partnerships, please submit a brief summary. Max 280 characters.
+            </p>
+            <textarea id="proposal" rows="3" style="width: 100%; background: #000; border: 1px solid #333; color: white; padding: 10px; border-radius: 8px; resize: none;" placeholder="Briefly describe your proposal..."></textarea>
+            <button class="action-btn" onclick="submitProposal()">Send to Office</button>
+        </div>
+
+        <div class="disclaimer">
+            CONFIDENTIAL: This application is for authorized personnel only. 
+            Unauthorized distribution is prohibited. 
+            © 2026 Musk Holdings.
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard</div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // Theme integration
+        document.documentElement.style.setProperty('--bg-color', tg.themeParams.bg_color || '#000000');
+        document.documentElement.style.setProperty('--card-bg', tg.themeParams.secondary_bg_color || '#111111');
+
+        function verifyAccess() {
+            const org = document.getElementById('orgName').value;
+            const purpose = document.getElementById('purpose').value;
+            
+            if(org.length < 3) {
+                tg.showAlert("Please enter a valid Organization Name.");
+                return;
+            }
+
+            // Simulate loading
+            const btn = document.querySelector('.btn-unlock');
+            btn.textContent = "Verifying Credentials...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                
+                // Haptic success
+                tg.HapticFeedback.notificationOccurred('success');
+                
+                // Set Main Button for quick contact
+                tg.MainButton.setText("EMAIL EXECUTIVE OFFICE");
+                tg.MainButton.show();
+                tg.MainButton.onClick(() => {
+                    tg.openLink("mailto:exec.office@tesla.com?subject=Partnership Inquiry from " + org);
+                });
+
+            }, 1500);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Email copied: " + text);
+                tg.HapticFeedback.impactOccurred('light');
+            });
+        }
+
+        function submitProposal() {
+            const text = document.getElementById('proposal').value;
+            if(text.length < 10) {
+                tg.showAlert("Proposal is too short.");
+                return;
+            }
+            
+            tg.showConfirm("Send this proposal to the executive office?", (confirmed) => {
+                if(confirmed) {
+                    // Here you would normally send data to backend
+                    showToast("Proposal Sent Successfully.");
+                    document.getElementById('proposal').value = "";
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
