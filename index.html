@@ -92,7 +92,7 @@
         .btn:active { transform: scale(0.98); }
         .btn-secondary { background: var(--card-bg); border: 1px solid var(--border); }
         
-        /* Story Buttons Special Style */
+        /* Story Button Special Style */
         .btn-story {
             background: var(--story-gradient);
             border: none;
@@ -184,13 +184,13 @@
         <!-- Header -->
         <div class="header">
             <div class="avatar">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/220px-Elon_Musk_Royal_Society_%28crop2%29.jpg" alt="Elon Musk">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL5TV-DS0v9f-nKaKtYxDnbXpWB9WtUZ3DAnNgQe4OUuVRJQdhG8g0_BM&s=10">
             </div>
             <div class="name" data-lang="name">Илон Маск</div>
             <div class="subtitle" data-lang="subtitle">Южноафриканский предприниматель, инженер и долларовый триллионер, государственный, политический и общественный деятель.</div>
         </div>
 
-        <!-- Stories Section (NEW) -->
+        <!-- Stories Section (UPDATED) -->
         <div class="section">
             <div class="section-title">
                 <span class="section-icon">✨</span>
@@ -199,9 +199,6 @@
             <div class="buttons-grid">
                 <button class="btn btn-story btn-full" onclick="shareToStory('card')">
                     📸 <span data-lang="storyCard">Опубликовать визитку</span>
-                </button>
-                <button class="btn btn-story btn-full" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="shareToStory('photo')">
-                    🖼️ <span data-lang="storyPhoto">Поделиться фото</span>
                 </button>
             </div>
         </div>
@@ -333,8 +330,8 @@
         // Конфигурация
         const CONFIG = {
             phone: "+15551234567",
-            photoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/220px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-            appUrl: window.location.href
+            photoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL5TV-DS0v9f-nKaKtYxDnbXpWB9WtUZ3DAnNgQe4OUuVRJQdhG8g0_BM&s=10",
+            appUrl: "https://t.me/ElonMuskCard_bot/ElonMuskCard"
         };
 
         const translations = {
@@ -351,7 +348,7 @@
                 shareCard: "Поделиться визиткой", portfolio: "Портфолио", achievements: "Достижения",
                 achievement1: "Создал первые в мире ракеты с возвращаемой первой ступенью.", achievement2: "Снизил стоимость доставки грузов на орбиту.", achievement3: "Ускорил переход автопрома на зеленую энергию.",
                 contacts: "Контакты для связи", saveContact: "Сохранить контакт", contactHint: "Нажмите, чтобы скопировать номер и открыть создание контакта",
-                storiesTitle: "Поделиться в историю", storyCard: "Опубликовать визитку", storyPhoto: "Поделиться фото",
+                storiesTitle: "Поделиться в историю", storyCard: "Опубликовать визитку",
                 toastCopied: "Номер скопирован! Откройте телефонную книгу для вставки.", toastStory: "Открываем камеру для истории...", toastLink: "Ссылка скопирована!"
             },
             en: {
@@ -367,7 +364,7 @@
                 shareCard: "Share Business Card", portfolio: "Portfolio", achievements: "Achievements",
                 achievement1: "Created the world's first rockets with a reusable first stage.", achievement2: "Reduced the cost of delivering cargo to orbit.", achievement3: "It accelerated the automotive industry's transition to green energy.",
                 contacts: "Contact Information", saveContact: "Save Contact", contactHint: "Tap to copy number and open contacts app",
-                storiesTitle: "Share to Story", storyCard: "Post Business Card", storyPhoto: "Share Photo",
+                storiesTitle: "Share to Story", storyCard: "Post Business Card",
                 toastCopied: "Number copied! Open phone book to paste.", toastStory: "Opening camera for story...", toastLink: "Link copied!"
             }
         };
@@ -406,20 +403,13 @@
         }
 
         // ИСПРАВЛЕННАЯ ФУНКЦИЯ СОХРАНЕНИЯ КОНТАКТА
-        // Вместо скачивания файла (которое ломает WebView), мы копируем номер
-        // и пытаемся открыть нативное приложение телефона
         function safeSaveContact() {
             const name = translations[currentLang].name;
             const phone = CONFIG.phone;
             
-            // 1. Копируем номер в буфер
             navigator.clipboard.writeText(phone).then(() => {
                 showToast(translations[currentLang].toastCopied);
-                
-                // 2. Небольшая задержка перед открытием dialer'а
                 setTimeout(() => {
-                    // Пытаемся открыть создание контакта через tel: протокол
-                    // Это безопасно и не вызывает черный экран
                     try {
                         window.location.href = `tel:${phone}`;
                     } catch (e) {
@@ -427,7 +417,6 @@
                     }
                 }, 800);
             }).catch(() => {
-                // Fallback если clipboard не сработал
                 window.location.href = `tel:${phone}`;
                 showToast(currentLang === 'ru' ? 'Открытие телефона...' : 'Opening phone...');
             });
@@ -435,47 +424,38 @@
             tg.HapticFeedback?.notificationOccurred('success');
         }
 
-        // ФУНКЦИИ ДЛЯ ИСТОРИЙ (STORIES)
+        // ФУНКЦИИ ДЛЯ ИСТОРИЙ (STORIES) - ИСПРАВЛЕНО
         function shareToStory(type) {
-            const text = currentLang === 'ru' 
-                ? `Визитка: ${translations.ru.name}` 
-                : `Business Card: ${translations.en.name}`;
-
             if (type === 'card') {
-                // Публикация визитки (ссылка + виджет)
+                // Публикация визитки (ссылка + виджет + фото)
                 if (tg.shareToStory) {
                     tg.shareToStory({
-                        url: CONFIG.appUrl,
-                        text: text,
-                        widget_link: { url: CONFIG.appUrl, name: currentLang === 'ru' ? "Открыть" : "Open" }
+                        url: CONFIG.appUrl, // Ссылка на бота
+                        text: currentLang === 'ru' ? "Визитка Илона Маска" : "Elon Musk Business Card",
+                        widget_link: { 
+                            url: CONFIG.appUrl, 
+                            name: currentLang === 'ru' ? "Открыть визитку" : "Open Card" 
+                        },
+                        media_url: CONFIG.photoUrl // Фото Илона Маска
                     });
                 } else {
                     // Fallback для старых версий
                     shareBusinessCard();
                 }
-            } else if (type === 'photo') {
-                // Публикация фото
-                if (tg.shareToStory) {
-                    tg.shareToStory({
-                        url: CONFIG.photoUrl,
-                        text: text
-                    });
-                } else {
-                    showToast(currentLang === 'ru' ? 'Обновите Telegram для этой функции' : 'Update Telegram for this feature');
-                }
             }
-            
             tg.HapticFeedback?.impactOccurred('medium');
         }
 
+        // ФУНКЦИЯ ПОДЕЛИТЬСЯ В ЧАТ
         function shareBusinessCard() {
             const shareText = currentLang === 'ru' 
-                ? `👤 ${translations.ru.name}\n${translations.ru.subtitle}\n\n🔗 ${CONFIG.appUrl}`
-                : `👤 ${translations.en.name}\n${translations.en.subtitle}\n\n🔗 ${CONFIG.appUrl}`;
+                ? `👤 ${translations.ru.name}\n${translations.ru.subtitle}\n\n🔗 Открыть визитку: ${CONFIG.appUrl}`
+                : `👤 ${translations.en.name}\n${translations.en.subtitle}\n\n🔗 Open card: ${CONFIG.appUrl}`;
             
             navigator.clipboard.writeText(CONFIG.appUrl).then(() => {
                 showToast(translations[currentLang].toastLink);
                 setTimeout(() => {
+                    // Открывает выбор чата для отправки сообщения
                     tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(CONFIG.appUrl)}&text=${encodeURIComponent(shareText)}`);
                 }, 800);
             });
