@@ -190,7 +190,7 @@
             <div class="subtitle" data-lang="subtitle">Южноафриканский предприниматель, инженер и долларовый триллионер, государственный, политический и общественный деятель.</div>
         </div>
 
-        <!-- Stories Section (UPDATED) -->
+        <!-- Stories Section -->
         <div class="section">
             <div class="section-title">
                 <span class="section-icon">✨</span>
@@ -206,7 +206,7 @@
         <!-- Useful Links -->
         <div class="section">
             <div class="section-title">
-                <span class="section-icon">🔗</span>
+                <span class="section-icon"></span>
                 <span data-lang="usefulLinks">Полезные ссылки</span>
             </div>
             <div class="buttons-grid">
@@ -293,13 +293,13 @@
                 <span data-lang="achievements">Достижения</span>
             </div>
             <ul class="achievements-list">
-                <li class="achievement-item"><span class="achievement-icon">🥇</span><span class="achievement-text" data-lang="achievement1">Создал первые в мире ракеты с возвращаемой первой ступенью.</span></li>
+                <li class="achievement-item"><span class="achievement-icon"></span><span class="achievement-text" data-lang="achievement1">Создал первые в мире ракеты с возвращаемой первой ступенью.</span></li>
                 <li class="achievement-item"><span class="achievement-icon">📈</span><span class="achievement-text" data-lang="achievement2">Снизил стоимость доставки грузов на орбиту.</span></li>
                 <li class="achievement-item"><span class="achievement-icon">🌍</span><span class="achievement-text" data-lang="achievement3">Ускорил переход автопрома на зеленую энергию.</span></li>
             </ul>
         </div>
 
-        <!-- Contact Section (FIXED) -->
+        <!-- Contact Section -->
         <div class="contact-card">
             <div class="section-title" style="justify-content: center;">
                 <span class="section-icon">📞</span>
@@ -331,7 +331,8 @@
         const CONFIG = {
             phone: "+15551234567",
             photoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL5TV-DS0v9f-nKaKtYxDnbXpWB9WtUZ3DAnNgQe4OUuVRJQdhG8g0_BM&s=10",
-            appUrl: "https://t.me/ElonMuskCard_bot/ElonMuskCard"
+            appUrl: "https://t.me/ElonMuskCard_bot/ElonMuskCard",
+            botUsername: "ElonMuskCard_bot" // Имя вашего бота без @
         };
 
         const translations = {
@@ -357,7 +358,7 @@
                 usefulLinks: "Useful Links", educationPortal: "Educational Portal", supportFunding: "Support & Funding", americaEvents: "America Events",
                 socialMedia: "Social Media", telegramChannel: "Telegram Channel", website: "Website",
                 availability: "When to Contact", workingHours: "Working Hours:",
-                availabilityText: "Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 3:00 PM<br>Sunday: Day off<br><br>⚠️ Do not disturb after 8:00 PM and on holidays",
+                availabilityText: "Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 3:00 PM<br>Sunday: Day off<br><br>️ Do not disturb after 8:00 PM and on holidays",
                 faq: "FAQ", faq1: "How to contact for collaboration?", faq1Answer: "You can write to me on Telegram or email. Best to do this during working hours.",
                 faq2: "What projects interest you?", faq2Answer: "I'm interested in tech startups, educational projects, and social initiatives.",
                 faq3: "Can I order a consultation?", faq3Answer: "Yes, consultations are available by appointment. Contact me to discuss details.",
@@ -402,7 +403,6 @@
             tg.HapticFeedback?.impactOccurred('light');
         }
 
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ СОХРАНЕНИЯ КОНТАКТА
         function safeSaveContact() {
             const name = translations[currentLang].name;
             const phone = CONFIG.phone;
@@ -424,41 +424,51 @@
             tg.HapticFeedback?.notificationOccurred('success');
         }
 
-        // ФУНКЦИИ ДЛЯ ИСТОРИЙ (STORIES) - ИСПРАВЛЕНО
+        // ФУНКЦИИ ДЛЯ ИСТОРИЙ
         function shareToStory(type) {
             if (type === 'card') {
-                // Публикация визитки (ссылка + виджет + фото)
                 if (tg.shareToStory) {
                     tg.shareToStory({
-                        url: CONFIG.appUrl, // Ссылка на бота
+                        url: CONFIG.appUrl,
                         text: currentLang === 'ru' ? "Визитка Илона Маска" : "Elon Musk Business Card",
                         widget_link: { 
                             url: CONFIG.appUrl, 
                             name: currentLang === 'ru' ? "Открыть визитку" : "Open Card" 
                         },
-                        media_url: CONFIG.photoUrl // Фото Илона Маска
+                        media_url: CONFIG.photoUrl
                     });
                 } else {
-                    // Fallback для старых версий
                     shareBusinessCard();
                 }
             }
             tg.HapticFeedback?.impactOccurred('medium');
         }
 
-        // ФУНКЦИЯ ПОДЕЛИТЬСЯ В ЧАТ
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ПОДЕЛИТЬСЯ В ЧАТ
+        // Чтобы получить эффект как на скриншоте (карточка с фото), лучше всего использовать Inline Mode.
+        // Но так как это требует настройки бота, здесь реализован лучший возможный вариант через share/url.
+        // Ссылка t.me/... автоматически подтянет Meta-теги вашего сайта (OG Image), 
+        // и Telegram покажет превью с фото Илона Маска.
         function shareBusinessCard() {
-            const shareText = currentLang === 'ru' 
-                ? `👤 ${translations.ru.name}\n${translations.ru.subtitle}\n\n🔗 Открыть визитку: ${CONFIG.appUrl}`
-                : `👤 ${translations.en.name}\n${translations.en.subtitle}\n\n🔗 Open card: ${CONFIG.appUrl}`;
+            // Копируем ссылку в буфер обмена на всякий случай
+            navigator.clipboard.writeText(CONFIG.appUrl);
             
-            navigator.clipboard.writeText(CONFIG.appUrl).then(() => {
-                showToast(translations[currentLang].toastLink);
-                setTimeout(() => {
-                    // Открывает выбор чата для отправки сообщения
-                    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(CONFIG.appUrl)}&text=${encodeURIComponent(shareText)}`);
-                }, 800);
-            });
+            // Используем switchInlineQuery, если бот поддерживает Inline Mode (это даст идеальный результат как на фото)
+            // Если нет - сработает fallback на share/url
+            
+            // Вариант 1: Попытка вызвать Inline режим (если настроен в BotFather)
+            // tg.switchInlineQuery("card", ["users", "groups", "channels"]); 
+            
+            // Вариант 2 (Основной): Стандартный шеринг с жирной ссылкой
+            // Telegram сам создаст красивое превью, если на странице визитки прописаны теги <meta property="og:image" ...>
+            const boldLink = `**${CONFIG.appUrl}**`;
+            
+            showToast(translations[currentLang].toastLink);
+            
+            // Небольшая задержка для UX
+            setTimeout(() => {
+                 tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(CONFIG.appUrl)}&text=${encodeURIComponent(boldLink)}`);
+            }, 500);
         }
 
         function viewPortfolio(imageUrl) {
