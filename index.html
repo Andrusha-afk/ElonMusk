@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Визитка | Личный кабинет</title>
+    
+    <!-- Подключение Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Подключение внешнего файла скриптов -->
+    <script src="script.js" defer></script>
+
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -178,13 +184,13 @@
     </style>
 </head>
 <body>
-    <div class="lang-switcher" onclick="toggleLanguage()"><span id="lang-text">🇬🇧 EN</span></div>
+    <div class="lang-switcher" onclick="toggleLanguage()"><span id="lang-text">🇧 EN</span></div>
 
     <div class="container">
         <!-- Header -->
         <div class="header">
             <div class="avatar">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL5TV-DS0v9f-nKaKtYxDnbXpWB9WtUZ3DAnNgQe4OUuVRJQdhG8g0_BM&s=10">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL5TV-DS0v9f-nKaKtYxDnbXpWB9WtUZ3DAnNgQe4OUuVRJQdhG8g0_BM&s=10" alt="Elon Musk">
             </div>
             <div class="name" data-lang="name">Илон Маск</div>
             <div class="subtitle" data-lang="subtitle">Южноафриканский предприниматель, инженер и долларовый триллионер, государственный, политический и общественный деятель.</div>
@@ -206,7 +212,7 @@
         <!-- Useful Links -->
         <div class="section">
             <div class="section-title">
-                <span class="section-icon"></span>
+                <span class="section-icon">🔗</span>
                 <span data-lang="usefulLinks">Полезные ссылки</span>
             </div>
             <div class="buttons-grid">
@@ -293,7 +299,7 @@
                 <span data-lang="achievements">Достижения</span>
             </div>
             <ul class="achievements-list">
-                <li class="achievement-item"><span class="achievement-icon"></span><span class="achievement-text" data-lang="achievement1">Создал первые в мире ракеты с возвращаемой первой ступенью.</span></li>
+                <li class="achievement-item"><span class="achievement-icon">🥇</span><span class="achievement-text" data-lang="achievement1">Создал первые в мире ракеты с возвращаемой первой ступенью.</span></li>
                 <li class="achievement-item"><span class="achievement-icon">📈</span><span class="achievement-text" data-lang="achievement2">Снизил стоимость доставки грузов на орбиту.</span></li>
                 <li class="achievement-item"><span class="achievement-icon">🌍</span><span class="achievement-text" data-lang="achievement3">Ускорил переход автопрома на зеленую энергию.</span></li>
             </ul>
@@ -321,6 +327,5 @@
 
     <!-- Toast -->
     <div class="toast" id="toast"></div>
-    <script src="script.js"></script>
 </body>
 </html>
